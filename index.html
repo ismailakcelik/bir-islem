@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Bir İşlem Oyunu</title>
   <style>
     body {
@@ -49,7 +49,7 @@
     }
     .ogrenci-listesi {
       display: grid;
-      grid-template-columns: repeat(7, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
       gap: 10px;
       margin-top: 25px;
       max-height: 300px;
@@ -57,7 +57,7 @@
       padding: 10px;
     }
     .ogrenci {
-      width: 100%;
+      width: 70px;
       height: 60px;
       display: flex;
       align-items: center;
@@ -126,30 +126,6 @@
     .ilk-1 { background-color: #ffe082; }
     .ilk-2 { background-color: #e0e0e0; }
     .ilk-3 { background-color: #d7ccc8; }
-
-    /* Modal */
-    #puanModal {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-    }
-    #puanModal .modal-content {
-      background: #fff;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      width: 300px;
-    }
-    #puanModal input {
-      width: 60%;
-      padding: 8px;
-      margin: 10px 0;
-    }
   </style>
 </head>
 <body>
@@ -157,22 +133,22 @@
     <div id="girisEkrani">
       <h3>📝 Öğrenci Adlarını Girin:</h3>
       <textarea id="ogrenciTextarea" placeholder="Öğrenci isimlerini her satıra bir tane olacak şekilde yazınız."></textarea><br>
-      <button class="btn" onclick="basla()">BAŞLA</button>
+      <button class="btn" onclick="basla()">🏁 BAŞLA 🏁</button>
     </div>
 
     <div id="oyunEkrani" class="hidden">
-      <h2>🧮 Bir İşlem Oyunu</h2>
+      <h2>🧮 Bir İşlem Oyunu 🧮</h2>
       <div id="sayilarAlani"></div>
       <div id="hedefSayi"></div>
       <button class="btn" onclick="uretimYap()">Sayıları Üret</button>
-      <button class="btn" onclick="gosterCozum()">🧠 Çözümü Göster</button>
-      <button class="btn" onclick="togglePuanTablosu()">📊 Puan Tablosunu Göster/Gizle</button>
+      <button class="btn" onclick="gosterCozum()">🧠 Çözümü Göster 🧠</button>
+      <button class="btn" onclick="togglePuanTablosu()">🥇🥈🥉 Puan Tablosunu Göster/Gizle 🥉🥈🥇</button>
 
       <div class="ogrenci-listesi" id="ogrenciler"></div>
       <div id="cozumAlani"></div>
 
       <div id="puanTablosu" class="hidden">
-        <h4>📊 Puan Tablosu</h4>
+        <h4>🥇🥈🥉 Puan Tablosu 🥉🥈🥇</h4>
         <div class="ilk-uc-wrapper" id="ilkUc"></div>
         <table>
           <thead><tr><th>İsim</th><th>Puan</th></tr></thead>
@@ -182,28 +158,17 @@
     </div>
   </div>
 
-  <!-- Modal -->
-  <div id="puanModal">
-    <div class="modal-content">
-      <h3 id="puanModalBaslik"></h3>
-      <input type="number" id="puanInput" placeholder="Puan girin" />
-      <br>
-      <button class="btn" onclick="puanGir()">Kaydet</button>
-      <button class="btn" onclick="modalKapat()">İptal</button>
-    </div>
-  </div>
-
   <script>
     let ogrenciler = [];
     let puanlar = {};
     let aktifSayilar = [];
     let hedef = 0;
     let cozumAdimlari = [];
-    let seciliOgrenci = null;
 
     function basla() {
       const metin = document.getElementById("ogrenciTextarea").value.trim();
       if (!metin) return alert("Lütfen öğrenci isimlerini girin.");
+
       ogrenciler = metin.split("\n").map(i => i.trim()).filter(i => i);
       puanlar = {};
       document.getElementById("girisEkrani").classList.add("hidden");
@@ -217,27 +182,16 @@
         div.className = "ogrenci";
         div.textContent = isim;
         div.onclick = function () {
-          seciliOgrenci = isim;
-          document.getElementById("puanModalBaslik").innerText = `${isim} için puan gir:`;
-          document.getElementById("puanInput").value = "";
-          document.getElementById("puanModal").style.display = "flex";
+          const puan = prompt(${isim} kaçar puan aldı? (Doğruysa 100, yaklaştıysa 50 vb.));
+          const deger = parseInt(puan);
+          if (!isNaN(deger)) {
+            puanlar[isim] += deger;
+            guncellePuanTablosu();
+          }
         };
         ogrenciAlani.appendChild(div);
       });
       guncellePuanTablosu();
-    }
-
-    function puanGir() {
-      const deger = parseInt(document.getElementById("puanInput").value);
-      if (!isNaN(deger)) {
-        puanlar[seciliOgrenci] += deger;
-        guncellePuanTablosu();
-      }
-      modalKapat();
-    }
-
-    function modalKapat() {
-      document.getElementById("puanModal").style.display = "none";
     }
 
     function uretimYap() {
@@ -252,7 +206,7 @@
 
         const perm = permute(sayilar);
         for (let p of perm) {
-          const sonuc = hesapla(p, 0, p[0], `${p[0]}`);
+          const sonuc = hesapla(p, 0, p[0], ${p[0]});
           if (sonuc) {
             cozum = sonuc;
             break;
@@ -260,8 +214,8 @@
         }
       }
 
-      document.getElementById("sayilarAlani").innerHTML = "Verilen Sayılar: " + aktifSayilar.map(s => `<span class='box'>${s}</span>`).join('');
-      document.getElementById("hedefSayi").innerHTML = `🎯 Hedef: <strong>${hedef}</strong>`;
+      document.getElementById("sayilarAlani").innerHTML = "Verilen Sayılar: " + aktifSayilar.map(s => <span class='box'>${s}</span>).join('');
+      document.getElementById("hedefSayi").innerHTML = 🎯 Hedef: <strong>${hedef}</strong>;
       document.getElementById("cozumAlani").textContent = "";
     }
 
@@ -278,10 +232,12 @@
       for (let op of opList) {
         let yeniToplam;
         if (op === '/' && toplam % sayilar[i+1] !== 0) continue;
-        yeniToplam = eval(`${toplam}${op}${sayilar[i+1]}`);
+        yeniToplam = eval(${toplam}${op}${sayilar[i+1]});
+
         const gosterOp = op === '*' ? 'x' : op === '/' ? '÷' : op;
-        const adim = `${toplam} ${gosterOp} ${sayilar[i+1]} = ${yeniToplam}`;
+        const adim = ${toplam} ${gosterOp} ${sayilar[i+1]} = ${yeniToplam};
         cozumAdimlari.push(adim);
+
         const sonuc = hesapla(sayilar, i+1, yeniToplam, yol);
         if (sonuc) return sonuc;
         cozumAdimlari.pop();
@@ -309,17 +265,18 @@
       ilkUcDiv.innerHTML = "";
 
       const sirali = Object.entries(puanlar).sort((a,b) => b[1] - a[1]);
+
       sirali.slice(0,3).forEach((entry, index) => {
         const div = document.createElement("div");
-        div.className = `ilk-uc-kutu ilk-${index+1}`;
+        div.className = ilk-uc-kutu ilk-${index+1};
         const madalya = ["🥇", "🥈", "🥉"][index] || "";
-        div.innerHTML = `${madalya}<br>${entry[0]}<br><span style='font-size:13px;'>${entry[1]} puan</span>`;
+        div.innerHTML = ${madalya}<br>${entry[0]}<br><span style='font-size:13px;'>${entry[1]} puan</span>;
         ilkUcDiv.appendChild(div);
       });
 
       sirali.slice(3).forEach(([isim, puan]) => {
         const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${isim}</td><td>${puan}</td>`;
+        tr.innerHTML = <td>${isim}</td><td>${puan}</td>;
         govde.appendChild(tr);
       });
     }
