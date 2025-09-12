@@ -85,20 +85,44 @@
       font-weight: bold;
     }
 
-    #sayilarAlani, #hedefSayi { font-size: 50px; margin: 15px 0; }
-    .box {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 2.5em;       /* font-size’a bağlı genişlik */
-  height: 2.5em;      /* font-size’a bağlı yükseklik */
-  font-size: 40px;    /* yazı boyutu → değiştirerek büyütebilirsin */
-  font-weight: bold;
-  background-color: #3498db;
-  color: #fff;
-  border-radius: 8px;
-  margin: 4px;
-}
+    /* Başlık + içerik iki sütun */
+    .sayilar-ve-hedef {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 80px;
+      margin: 10px 0 20px;
+      flex-wrap: wrap;
+    }
+    .sutun { display: flex; flex-direction: column; align-items: center; }
+
+    .sutun-baslik {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+   
+    }
+    #sayilarBaslik { color: #2c3e50; }
+    #hedefBaslik { color: #c0392b; }
+
+    /* Bu font-size ebeveynden gelsin -> kutular 2.5em'e göre ölçeklensin */
+    #sayilarAlani, #hedefSayi { font-size: 50px; margin: 15px 0; display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+    .box, .hedef-box {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.5em;   /* ebeveyn font-size’a bağlı */
+      height: 2.5em;  /* ebeveyn font-size’a bağlı */
+      /* font-size: inherit; -> default zaten inherit, ayarlamaya gerek yok */
+      font-weight: bold;
+      color: #fff;
+      border-radius: 8px;
+      margin: 4px;
+    }
+    .box { background-color: #3498db; }
+    .hedef-box { background-color: #e74c3c; }
+
     #cozumAlani {
       margin-top: 15px;
       display: flex; flex-direction: column; gap: 8px; align-items: center;
@@ -161,8 +185,18 @@
         </select>
       </label>
 
-      <div id="sayilarAlani"></div>
-      <div id="hedefSayi"></div>
+      <!-- Yeni: başlıklar kendi içeriklerine ortalı, iki sütun -->
+      <div class="sayilar-ve-hedef">
+        <div class="sutun">
+          <div id="sayilarBaslik" class="sutun-baslik">Verilen Sayılar:</div>
+          <div id="sayilarAlani"></div>
+        </div>
+        <div class="sutun">
+          <div id="hedefBaslik" class="sutun-baslik">🎯 Hedef:</div>
+          <div id="hedefSayi"></div>
+        </div>
+      </div>
+
       <button class="btn" onclick="uretimYap()">🔢 Sayıları Üret 🔢</button>
       <button class="btn" onclick="gosterCozum()">🧠 Çözümü Göster 🧠</button>
       <button class="btn" onclick="puanTablosuAc()">🥇🥈🥉 Puan Tablosu 🥉🥈🥇</button>
@@ -236,15 +270,9 @@ function uyariGoster(mesaj) {
   document.getElementById("uyariMesaj").innerText = mesaj;
   document.getElementById("uyariModal").style.display = "flex";
 }
-function uyariKapat() {
-  document.getElementById("uyariModal").style.display = "none";
-}
-function modalKapat() {
-  document.getElementById("puanModal").style.display = "none";
-}
-function geriAlKapat() {
-  document.getElementById("geriAlModal").style.display = "none";
-}
+function uyariKapat() { document.getElementById("uyariModal").style.display = "none"; }
+function modalKapat() { document.getElementById("puanModal").style.display = "none"; }
+function geriAlKapat() { document.getElementById("geriAlModal").style.display = "none"; }
 
 function basla() {
   const metin = document.getElementById("ogrenciTextarea").value.trim();
@@ -322,12 +350,15 @@ document.addEventListener("keydown", function(e) {
 });
 
 function uretimYap() {
+  // her turda "puan-verildi" işaretlerini temizle
   document.querySelectorAll(".ogrenci").forEach(div => div.classList.remove("puan-verildi"));
+
   const seviye = parseInt(document.getElementById("seviyeSec").value);
   if (seviye <= 2) aktifIslemler = ['+','-'];
   else if (seviye <= 6) aktifIslemler = ['+','-','*'];
   else aktifIslemler = ['+','-','*','/'];
   erkenBitir = (seviye <= 5);
+
   let cozum = null;
   while (!cozum) {
     const sayilar = [];
@@ -342,6 +373,7 @@ function uretimYap() {
       }
       sayilar.push(s);
     }
+
     if (seviye <= 2) {
       const [a, b] = sayilar.slice(0, 2);
       if (Math.random() < 0.5) {
@@ -356,25 +388,27 @@ function uretimYap() {
     } else if (seviye <= 6) {
       hedef = sayilar.slice(0,3).reduce((x,y)=>x+y);
     } else {
-      hedef = (seviye <= 6) ? Math.floor(Math.random() * 401) + 100
-                            : Math.floor(Math.random() * 500) + 500;
+      hedef = Math.floor(Math.random() * 500) + 500;
     }
+
     aktifSayilar = sayilar;
+
     if (seviye > 2) {
       cozumAdimlari = [];
       const perm = permute(sayilar);
       for (let p of perm) {
         const sonuc = hesapla(p, 0, p[0], `${p[0]}`, seviye);
-        if (sonuc) {
-          cozum = sonuc;
-          break;
-        }
+        if (sonuc) { cozum = sonuc; break; }
       }
     }
   }
+
+  // 🔸 Metinleri artık kutuların içine gömmüyoruz; başlıklar ayrı
   document.getElementById("sayilarAlani").innerHTML =
-    "Verilen Sayılar: " + aktifSayilar.map(s => `<span class='box'>${s}</span>`).join('');
-  document.getElementById("hedefSayi").innerHTML = `🎯 Hedef: <strong>${hedef}</strong>`;
+    aktifSayilar.map(s => `<span class='box'>${s}</span>`).join('');
+  document.getElementById("hedefSayi").innerHTML =
+    `<span class='hedef-box'>${hedef}</span>`;
+
   document.getElementById("cozumAlani").innerHTML = "";
   document.body.style.backgroundColor = renkler[Math.floor(Math.random()*renkler.length)];
 }
@@ -425,6 +459,7 @@ function permute(arr) {
 function guncellePuanTablosu() {
   const govde = document.getElementById("puanTabloGovde");
   const ilkUcDiv = document.getElementById("ilkUc");
+  if (!govde || !ilkUcDiv) return;
   govde.innerHTML = "";
   ilkUcDiv.innerHTML = "";
   const sirali = Object.entries(puanlar).sort((a, b) => b[1] - a[1]);
@@ -448,12 +483,8 @@ function guncellePuanTablosu() {
   });
 }
 
-function puanTablosuAc() {
-  document.getElementById("puanTabloModal").style.display = "flex";
-}
-function puanTablosuKapat() {
-  document.getElementById("puanTabloModal").style.display = "none";
-}
+function puanTablosuAc() { document.getElementById("puanTabloModal").style.display = "flex"; }
+function puanTablosuKapat() { document.getElementById("puanTabloModal").style.display = "none"; }
 
 // dışarı tıklayınca modal kapanır
 window.addEventListener("click", function(e) {
