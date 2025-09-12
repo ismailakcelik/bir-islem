@@ -100,7 +100,7 @@
       font-size: 24px;
       font-weight: bold;
       margin-bottom: 8px;
-   
+     
     }
     #sayilarBaslik { color: #2c3e50; }
     #hedefBaslik { color: #c0392b; }
@@ -112,8 +112,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 2.5em;   /* ebeveyn font-size’a bağlı */
-      height: 2.5em;  /* ebeveyn font-size’a bağlı */
+      width: 1.9em;   /* ebeveyn font-size’a bağlı */
+      height: 1.9em;  /* ebeveyn font-size’a bağlı */
       /* font-size: inherit; -> default zaten inherit, ayarlamaya gerek yok */
       font-weight: bold;
       color: #fff;
@@ -167,8 +167,8 @@
 <body>
   <div class="kapsayici">
     <div id="girisEkrani">
-      <h3>📝 Öğrenci Adlarını Girin 📝</h3>
-      <textarea id="ogrenciTextarea" placeholder="Öğrenci isimlerini her satıra bir tane olacak şekilde yazınız."></textarea><br>
+      <h3>📝 Katılımcı İsimlerini Girin 📝</h3>
+      <textarea id="ogrenciTextarea" placeholder="Katılımcı isimlerini her satıra bir tane olacak şekilde yazınız."></textarea><br>
       <button class="btn" onclick="basla()">🏁 BAŞLA 🏁</button>
     </div>
 
@@ -192,7 +192,7 @@
           <div id="sayilarAlani"></div>
         </div>
         <div class="sutun">
-          <div id="hedefBaslik" class="sutun-baslik">🎯 Hedef:</div>
+          <div id="hedefBaslik" class="sutun-baslik">Hedef:</div>
           <div id="hedefSayi"></div>
         </div>
       </div>
@@ -430,9 +430,10 @@ function hesapla(sayilar, i, toplam, yol, seviye) {
     return null;
   }
   for (let op of aktifIslemler) {
-    let yeniToplam;
-    if (op === '/' && toplam % sayilar[i+1] !== 0) continue;
-    yeniToplam = eval(`${toplam}${op}${sayilar[i+1]}`);
+  let yeniToplam;
+  if (op === '/' && toplam % sayilar[i+1] !== 0) continue;
+  yeniToplam = eval(`${toplam}${op}${sayilar[i+1]}`);
+  if (yeniToplam < 0) continue; // ❌ negatif sonuçları atla
     const gosterOp = op === '*' ? 'x' : op === '/' ? '÷' : op;
     const adim = `${toplam} ${gosterOp} ${sayilar[i+1]} = ${yeniToplam}`;
     cozumAdimlari.push(adim);
