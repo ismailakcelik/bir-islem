@@ -209,7 +209,47 @@
 #timer.timeout {
   background: #c62828;
 }
- 
+
+/* Açılır/kapanır bilgi kutusu */
+.info-box{
+  margin-top:12px;
+  background:#fffbe6;
+  border:1px solid #f0d98c;
+  border-left:6px solid #f4c542;
+  border-radius:10px;
+  padding:0;
+  text-align:left;
+  color:#333;
+  overflow:hidden;
+}
+
+.info-header{
+  cursor:pointer;
+  padding:10px 14px;
+  font-weight:bold;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:16px;
+}
+
+.info-header:hover{
+  background:#fff3c0;
+}
+
+.info-content{
+  padding:0 14px 10px 14px;
+  display:none;
+}
+
+.info-content ul{
+  margin:0;
+  padding-left:18px;
+}
+.info-content li{
+  margin:4px 0;
+  line-height:1.35;
+}
  </style>
 </head>
 <body>
@@ -218,6 +258,30 @@
       <h3>📝 Katılımcı İsimlerini Girin 📝</h3>
       <textarea id="ogrenciTextarea" placeholder="Katılımcı isimlerini her satıra bir tane olacak şekilde yazınız."></textarea><br>
       <button class="btn" onclick="basla()">🏁 BAŞLA 🏁</button>
+      <div class="info-box" id="bi-nasil">
+  <div class="info-header" onclick="toggleInfo('bi-nasil')">
+    🧮 Bir İşlem – Nasıl Oynanır? <span>➕</span>
+  </div>
+  <div class="info-content">
+    <ul>
+      <li>Katılımcı isimlerini her satıra bir katılımcı gelecek şekilde girip <strong>Başla</strong> butonuna basın.</li>
+      <li><strong>Sayıları Üret</strong> butonu ile rastgele sayılar ve <em>hedef</em> görünür.</li>
+      <li>Oyuncular verilen sayılarla işlemler yaparak hedef sayıya ulaşmaya çalışır.</li>
+      <li>Seçilen <strong>Seviye</strong>ye göre zorluk ve işlemler değişir:
+        <ul>
+          <li><strong>Seviye 1–2 (Kolay):</strong> Toplama, çıkarma</li>
+          <li><strong>Seviye 3–6 (Orta):</strong> Toplama, çıkarma, çarpma</li>
+          <li><strong>Seviye 7–10 (Zor):</strong> Toplama, çıkarma, çarpma, bölme</li>
+        </ul>
+      </li>
+      <li>Çözüm bulan oyuncuya puan verilir. Oyunculara 0-100 arasında puanlar verilir. Hedefi tam bulan oyuncuya 100, işlemlere ve hedefe yaklaşmaya göre verilen puanlar değişebilir.</li>
+      <li><strong>Çözümü Göster</strong> butonu ile hedefe ulaşmak için çözüm yöntemi gösterilir.</li>
+       <li><strong>Puan Tablosu</strong> ile sıralamayı görüntüleyebilirsiniz.</li>
+      <li>Sağ üstte bulunan sayaçtan 1, 3, 5 ve 10 dakikalık süre başlatabilirsiniz. Seçiler süre her turda yeniden başlar.</li>
+      <li>Eğer bir oyuncuya yanlış puan verilirse oyuncunun ismine tekrar tıklanarak son verilen puan geri alınabilir.</li>
+    </ul>
+  </div>
+</div>
     </div>
 
     <div id="oyunEkrani" class="hidden">
@@ -587,6 +651,14 @@ function updateTimerDisplay() {
   const sec = String(kalanSure % 60).padStart(2, '0');
   t.textContent = `⏱ ${min}:${sec}`;
   t.classList.remove("timeout");
+}
+function toggleInfo(id){
+  const box = document.getElementById(id);
+  const content = box.querySelector(".info-content");
+  const headerIcon = box.querySelector(".info-header span");
+  const isOpen = content.style.display === "block";
+  content.style.display = isOpen ? "none" : "block";
+  headerIcon.textContent = isOpen ? "➕" : "➖";
 }
 </script>
 </body>
