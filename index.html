@@ -380,6 +380,12 @@ $("fin").onclick=()=>{clearInterval(tmI);show("end");[523,523,523,659,784,1046].
 $("cont").onclick=()=>{show("game");if(round&&minutes&&left>0)startTimer()};
 $("newg").onclick=()=>{show("setup")};
 (function(){const _a=["011010010111001101101101", "01100001011010010110110001100001", "011010110110001101100101", "011011000110100101101011"],_b=["100100111001011010010100", "100101001001110010011010", "10011110100101101001001110011110", "100101101000110010010010"],_h=1106472806,_i=t=>t.replace(/[01]/g,c=>c==="0"?"1":"0"),_d=a=>a.join("").match(/.{8}/g).map(b=>String.fromCharCode(parseInt(b,2))).join(""),_f=t=>{let h=2166136261;for(let i=0;i<t.length;i++){h^=t.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0},_n=()=>{let t=_d(_a);if(_f(t)===_h)return t;t=_d(_b.map(_i).reverse());return _f(t)===_h?t:""},_k="w"+Math.random().toString(36).slice(2,8),_s="position:fixed;left:50%;bottom:2px;transform:translateX(-50%);z-index:2147483647;font:700 11px/1 Poppins,Segoe UI,sans-serif;letter-spacing:.5px;color:#fff;mix-blend-mode:difference;opacity:.85;pointer-events:none;user-select:none;display:block;visibility:visible";function _m(){const t=_n();if(!t)return;let e=document.getElementById(_k);if(!e){e=document.createElement("div");e.id=_k;document.body.appendChild(e)}if(e.textContent!==t)e.textContent=t;if(e.getAttribute("style")!==_s)e.setAttribute("style",_s)}_m();setInterval(_m,1200);new MutationObserver(_m).observe(document.documentElement,{childList:true,subtree:true,attributes:true,characterData:true})})();
+/* ESC tuşu ile açık olan tüm modalları kapat */
+window.addEventListener("keydown", e => {
+  if (e.key === "Escape") {
+    document.querySelectorAll(".modal").forEach(m => m.classList.add("hidden"));
+  }
+});
 </script>
 </body>
 </html>
